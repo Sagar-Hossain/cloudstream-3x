@@ -49,7 +49,7 @@
             android:thumbTint="?attr/white"
             android:value="1.0"
             android:valueFrom="0.1"
-            android:valueTo="2.0"
+            android:valueTo="3.0"
             app:labelStyle="@style/BlackLabel"
             app:thumbColor="?attr/white"
             app:tickVisible="false"

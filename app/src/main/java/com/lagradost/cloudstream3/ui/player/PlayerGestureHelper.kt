@@ -133,7 +133,7 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
     val holdHandler = Handler(Looper.getMainLooper())
     var hasTriggeredSpeedUp = false
     val holdRunnable = Runnable {
-        playerView.player.setPlaybackSpeed(2.0f)
+        playerView.player.setPlaybackSpeed(3.0f)
         showOrHideSpeedUp(true)
         playerView.callbacks?.onHoldSpeedUp(true)
         hasTriggeredSpeedUp = true

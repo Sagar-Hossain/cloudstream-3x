@@ -12,7 +12,7 @@ jobs:
           java-version: 17
       - run: |
           chmod +x gradlew
-          ./gradlew assemblePrereleaseDebug
+          ./gradlew assemblePrereleaseRelease
       - uses: actions/upload-artifact@v4
         with:
           name: cloudstream-3x-apk

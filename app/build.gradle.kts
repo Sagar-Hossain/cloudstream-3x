@@ -141,12 +141,12 @@ android {
         )
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-
-    buildTypes {
+buildTypes {
         release {
             isDebuggable = false
             isMinifyEnabled = false
             isShrinkResources = false
+            signingConfig = signingConfigs.getByName("debug")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

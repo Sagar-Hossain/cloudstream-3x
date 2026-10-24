@@ -1,4 +1,4 @@
-name: Build CloudStream 3x
+name: Build CloudStream 3x (Stable Release)
 on: workflow_dispatch
 jobs:
   build:
@@ -9,8 +9,31 @@ jobs:
         with: { distribution: temurin, java-version: 17 }
       - uses: gradle/actions/setup-gradle@v4
       - run: bash apply-3x.sh
-      - run: chmod +x gradlew && ./gradlew assembleStableDebug
+      - run: chmod +x gradlew && ./gradlew assembleStableRelease
+
+      # Sign with a persistent key (so future updates install over each other)
+      - name: Restore keystore
+        id: ks
+        uses: actions/cache@v4
+        with:
+          path: my.keystore
+          key: my-keystore-v1
+      - name: Create keystore (first time only)
+        if: steps.ks.outputs.cache-hit != 'true'
+        run: keytool -genkeypair -keystore my.keystore -alias my -keyalg RSA -keysize 2048 -validity 36500 -storepass cs3pass123 -keypass cs3pass123 -dname "CN=CS3 3x"
+      - name: Align and sign
+        run: |
+          BT=$ANDROID_HOME/build-tools/$(ls $ANDROID_HOME/build-tools | sort -V | tail -1)
+          mkdir out
+          for f in $(find app/build/outputs/apk/stable/release -name "*.apk"); do
+            n=$(basename $f .apk)
+            $BT/zipalign -p 4 $f out/$n-aligned.apk
+            $BT/apksigner sign --ks my.keystore --ks-pass pass:cs3pass123 --key-pass pass:cs3pass123 --out out/$n-signed.apk out/$n-aligned.apk
+          done
+          rm out/*-aligned.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: cloudstream-3x-apk
-          path: app/build/outputs/apk/**/*.apk
+          name: cloudstream-3x-stable
+          path: |
+            out/*.apk
+            my.keystore
